@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CwC Tech</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+:root {
+    --primary-color: #9BCFC4;
+    --deep-green: #0F5C4D;
+    --glass-bg: rgba(155, 207, 196, 0.55);
+    --glass-scroll: rgba(155, 207, 196, 0.85);
+}
+
+/* ===== 基本結構 ===== */
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    background: #E8FFFB;
+}
+
+/* ===== Glass Navbar ===== */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(14px);
+    background: var(--glass-bg);
+    transition: all 0.4s ease;
+}
+
+/* 滾動後變深 + 陰影 */
+.navbar.scrolled {
+    background: var(--glass-scroll);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* ===== Navbar 文字 ===== */
+
+.navbar .nav-link {
+    color: white !important;
+    position: relative;
+    padding: 8px 12px;
+    transition: color 0.3s ease;
+}
+
+/* Hover */
+.navbar .nav-link:hover {
+    color: var(--deep-green) !important;
+}
+
+/* Active */
+.navbar .nav-link.active {
+    color: var(--deep-green) !important;
+    font-weight: 600;
+}
+
+/* 動畫底線 */
+.navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0%;
+    height: 3px;
+    background: var(--deep-green);
+    transition: width 0.35s ease;
+}
+
+.navbar .nav-link.active::after {
+    width: 100%;
+}
+
+/* Logo */
+.navbar-brand img {
+    height: 40px;
+}
+
+/* ===== 主內容 ===== */
+
+main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.section-iframe {
+    flex: 1;
+    display: none;
+}
+
+.section-iframe.active {
+    display: block;
+}
+
+.section-iframe iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+/* ===== Footer ===== */
+
+footer {
+    background: #9BCFC4;
+    color: white;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--deep-green);
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== Navbar ===== -->
+<nav class="navbar navbar-expand-lg">
+<div class="container">
+    <a class="navbar-brand" href="#" onclick="showSection('home')">
+        <img src="images/logo.png">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" onclick="showSection('home')">首頁</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('product')">產品</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('spec')">規格</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('buy')">購買</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('faq')">問與答</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</nav>
+
+<!-- ===== Main ===== -->
+<main>
+
+<section id="home" class="section-iframe active">
+    <iframe src="02_company/company.html"></iframe>
+</section>
+
+<section id="product" class="section-iframe">
+    <iframe src="04_product/product.html"></iframe>
+</section>
+
+<section id="spec" class="section-iframe">
+    <iframe src="05_table/table.html"></iframe>
+</section>
+
+<section id="buy" class="section-iframe">
+    <iframe src="06_shopping/shopping.html"></iframe>
+</section>
+
+<section id="faq" class="section-iframe">
+    <iframe src="07_faq/faq.html"></iframe>
+</section>
+
+<section id="about" class="section-iframe">
+    <iframe src="01_me/me.html"></iframe>
+</section>
+
+</main>
+
+<!-- ===== Footer ===== -->
+<footer class="py-3">
+<div class="container text-end">
+    <a href="#" onclick="showSection('about')">關於我</a>
+</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function showSection(sectionId) {
+
+    document.querySelectorAll('.section-iframe').forEach(sec=>{
+        sec.classList.remove('active');
+    });
+
+    document.getElementById(sectionId).classList.add('active');
+
+    document.querySelectorAll('.nav-link').forEach(link=>{
+        link.classList.remove('active');
+    });
+
+    const activeLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+    if(activeLink) activeLink.classList.add('active');
+
+    const navbarCollapse = document.getElementById('navbarNav');
+    const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+    if (bsCollapse) bsCollapse.hide();
+}
+
+/* 滾動變色 */
+window.addEventListener("scroll", function(){
+    const navbar = document.querySelector(".navbar");
+    if(window.scrollY > 20){
+        navbar.classList.add("scrolled");
+    } else {
+        navbar.classList.remove("scrolled");
+    }
+});
+</script>
+
+</body>
+</html>

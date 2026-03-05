@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陳小奇｜個人履歷</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+  background-color: #f8f9fa;
+  scroll-behavior: smooth;
+}
+
+/* ===== Hero ===== */
+
+.hero {
+  position: relative;
+  height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: url('images/studio.jpg') no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+}
+
+.avatar {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  z-index: 3;
+  transition: transform 0.4s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.08);
+}
+
+/* ===== Section ===== */
+
+.section {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease-out;
+  margin-bottom: 40px;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-title {
+  border-left: 5px solid #0d6efd;
+  padding-left: 10px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.email-copy {
+  cursor: pointer;
+}
+
+.toast-container {
+  z-index: 1080;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero mb-5">
+  <div class="hero-content">
+    <img id="avatarImg" src="images/avatar.png" class="avatar img-fluid mb-3">
+    <h2 id="displayName">載入中...</h2>
+    <p id="tagline">載入中...</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <h4 class="section-title">基本資料</h4>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><strong>姓名：</strong><span id="nameValue">載入中...</span></li>
+      <li class="list-group-item"><strong>生日：</strong><span id="birthDateValue">載入中...</span></li>
+      <li class="list-group-item email-copy" id="emailBlock">
+        <strong>聯絡 Email：</strong>
+        <span id="emailText">載入中...</span>
+        <span class="badge bg-primary ms-2">點擊複製</span>
+      </li>
+      <li class="list-group-item"><strong>學歷：</strong><span id="educationValue">載入中...</span></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h4 class="section-title">專業背景</h4>
+    <p><strong>經歷：</strong><span id="experienceValue">載入中...</span></p>
+    <p><strong>專長領域：</strong></p>
+    <ul id="skillsList"></ul>
+  </div>
+
+  <div class="section">
+    <h4 class="section-title">自我介紹</h4>
+    <div id="aboutContent"></div>
+  </div>
+
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="copyToast" class="toast text-bg-success border-0">
+    <div class="toast-body">已複製 email</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+/* ===== 改成你的真正 GAS URL ===== */
+const RESUME_API_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec?api=1";
+
+/* ===== 假資料 fallback ===== */
+const fallbackData = {
+  pageTitle: "陳小奇｜個人履歷",
+  displayName: "陳小奇",
+  tagline: "AI 創作實驗者｜前端開發者",
+  birthDate: "1995-01-01",
+  email: "chen@example.com",
+  education: "國立科技大學 資工系",
+  experience: "5 年前端與 AI 應用開發經驗",
+  skills: ["HTML", "CSS", "JavaScript", "Bootstrap"],
+  aboutParagraphs: [
+    "我熱愛 AI 與網頁設計的整合應用。",
+    "目前專注於建立 AI 教學與實戰專案。"
+  ]
+};
+
+function setText(id, value) {
+  document.getElementById(id).textContent = value || "";
+}
+
+function renderList(el, items) {
+  el.innerHTML = "";
+  (items || []).forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    el.appendChild(li);
+  });
+}
+
+function renderAbout(paragraphs) {
+  const about = document.getElementById("aboutContent");
+  about.innerHTML = "";
+  (paragraphs || []).forEach(text => {
+    const p = document.createElement("p");
+    p.textContent = text;
+    about.appendChild(p);
+  });
+}
+
+function applyResumeData(data) {
+
+  document.title = data.pageTitle || document.title;
+
+  setText("displayName", data.displayName);
+  setText("nameValue", data.displayName);
+  setText("tagline", data.tagline);
+  setText("birthDateValue", data.birthDate);
+  setText("emailText", data.email);
+  setText("educationValue", data.education);
+  setText("experienceValue", data.experience);
+
+  if (data.avatarUrl && data.avatarUrl.trim() !== "") {
+    document.getElementById("avatarImg").src = data.avatarUrl;
+  }
+
+  if (data.heroImageUrl && data.heroImageUrl.trim() !== "") {
+    document.querySelector(".hero").style.backgroundImage =
+      `url('${data.heroImageUrl}')`;
+  }
+
+  renderList(document.getElementById("skillsList"), data.skills);
+  renderAbout(data.aboutParagraphs);
+}
+
+/* ===== 載入資料 ===== */
+
+async function loadResumeData() {
+  try {
+    const response = await fetch(RESUME_API_URL, { cache: "no-store" });
+
+    if (!response.ok) throw new Error("HTTP " + response.status);
+
+    const data = await response.json();
+
+    applyResumeData(data);
+
+  } catch (err) {
+    console.warn("API 失敗，改用 fallback 資料");
+    applyResumeData(fallbackData);
+  }
+}
+
+/* ===== Email 複製 ===== */
+
+document.getElementById("emailBlock").addEventListener("click", function () {
+  const email = document.getElementById("emailText").innerText;
+  navigator.clipboard.writeText(email).then(function () {
+    new bootstrap.Toast(document.getElementById("copyToast")).show();
+  });
+});
+
+/* ===== 滾動動畫 ===== */
+
+const sections = document.querySelectorAll(".section");
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add("visible");
+  });
+}, { threshold: 0.2 });
+
+sections.forEach(section => observer.observe(section));
+
+loadResumeData();
+
+</script>
+
+</body>
+</html>
